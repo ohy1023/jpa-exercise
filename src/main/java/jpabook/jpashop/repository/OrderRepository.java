@@ -76,10 +76,8 @@ public class OrderRepository {
     }
 
     /**
-     *
      * JPA 구현체로 Hibernate를 사용하는데, 스프링 부트 3버전 부터는 Hibernate 6 버전을 사용하고 있습니다.
      * distinct 안써도 Hibernate 6버전은 페치 조인 사용 시 자동으로 중복 제거를 하도록 변경되었다고 합니다.
-     *
      */
     public List<Order> findAllWithItem() {
         return em.createQuery(
@@ -88,6 +86,16 @@ public class OrderRepository {
                                 " join fetch o.delivery d" +
                                 " join fetch o.orderItems oi" +
                                 " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                        "select o from Order o" +
+                                " join fetch o.member m" +
+                                " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
     }
 
